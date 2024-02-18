@@ -24,11 +24,13 @@ export class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    if (
-      prevState.page !== this.state.page ||
-      prevState.filter !== this.state.filter
-    ) {
-      this.getPictures(this.state.filter, this.state.page);
+    if (prevState.page !== this.state.page) {
+      this.getPictures(_, this.state.page);
+    }
+
+    if (prevState.filter !== this.state.filter) {
+      this.setState({ images: [] });
+      this.getPictures(this.state.filter);
     }
   }
 
@@ -61,8 +63,9 @@ export class App extends Component {
     this.setState({ loader: true });
     try {
       const data = await fetchPicture(value, this.state.page);
-      if (data.length < 0)
+      if (data.hits.length === 0)
         return alert('Opps! There are no pictures available');
+
       this.setState(prevState => ({
         images: [...prevState.images, ...data.hits],
       }));
