@@ -17,6 +17,7 @@ export class App extends Component {
       alt: '',
     },
     loader: false,
+    showBtn: false,
   };
 
   componentDidMount() {
@@ -24,13 +25,11 @@ export class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    if (prevState.page !== this.state.page) {
-      this.getPictures(_, this.state.page);
-    }
-
-    if (prevState.filter !== this.state.filter) {
-      this.setState({ images: [] });
-      this.getPictures(this.state.filter);
+    if (
+      prevState.page !== this.state.page ||
+      prevState.filter !== this.state.filter
+    ) {
+      this.getPictures(this.state.filter, this.state.page);
     }
   }
 
@@ -50,7 +49,7 @@ export class App extends Component {
   };
 
   handleFilterChange = filter => {
-    this.setState({ filter: filter });
+    this.setState({ filter: filter, page: 1, images: [] });
   };
 
   handleOnButtonClick = () => {
@@ -59,15 +58,16 @@ export class App extends Component {
     }));
   };
 
-  getPictures = async (value = '') => {
+  getPictures = async (value, page) => {
     this.setState({ loader: true });
     try {
-      const data = await fetchPicture(value, this.state.page);
+      const data = await fetchPicture(value, page);
       if (data.hits.length === 0)
         return alert('Opps! There are no pictures available');
 
       this.setState(prevState => ({
         images: [...prevState.images, ...data.hits],
+        showBtn: this.state.page < Math.ceil(data.totalHits / 12),
       }));
     } catch (error) {
       alert(error.message);
@@ -91,9 +91,7 @@ export class App extends Component {
             <img src={this.state.image.url} alt={this.state.image.alt} />
           </Modal>
         )}
-        {this.state.images.length !== 0 && (
-          <Button onClick={this.handleOnButtonClick} />
-        )}
+        {this.state.showBtn && <Button onClick={this.handleOnButtonClick} />}
         {this.state.loader && <Loader />}
       </>
     );
