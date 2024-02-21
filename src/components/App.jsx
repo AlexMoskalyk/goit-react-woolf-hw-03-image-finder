@@ -20,10 +20,6 @@ export class App extends Component {
     showBtn: false,
   };
 
-  componentDidMount() {
-    this.getPictures();
-  }
-
   componentDidUpdate(_, prevState) {
     if (
       prevState.page !== this.state.page ||
@@ -48,7 +44,7 @@ export class App extends Component {
     this.setState(prevState => ({ showModal: !prevState.showModal }));
   };
 
-  handleFilterChange = filter => {
+  handleFilterSubmit = filter => {
     this.setState({ filter: filter, page: 1, images: [] });
   };
 
@@ -80,7 +76,7 @@ export class App extends Component {
     return (
       <>
         <div>
-          <Searchbar handleFilterChange={this.handleFilterChange} />
+          <Searchbar handleFilter={this.handleFilterSubmit} />
           <ImageGallery
             images={this.state.images}
             onImageClick={this.onImageClick}

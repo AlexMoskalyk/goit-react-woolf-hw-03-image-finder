@@ -11,7 +11,7 @@ export default class Searchbar extends Component {
   handleSubmit = evt => {
     evt.preventDefault();
     const optimizeValue = this.state.search.trim().toLowerCase();
-    this.props.handleFilterChange(optimizeValue);
+    this.props.handleFilter(optimizeValue);
     this.setState({ search: '' });
   };
 
